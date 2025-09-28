@@ -1,13 +1,15 @@
+server:
+  port: 8080
+
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/notifications
+    url: jdbc:postgresql://postgres:5432/notifications
     username: vinay
     password: password
     driver-class-name: org.postgresql.Driver
-
   jpa:
     hibernate:
-      ddl-auto: update   # ⚠️ Dev only. Use Flyway/Liquibase in production.
+      ddl-auto: update   # ⚠️ dev only
     show-sql: true
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     properties:
@@ -16,54 +18,25 @@ spring:
           time_zone: UTC
 
   redis:
-    host: localhost
+    host: redis
     port: 6379
 
   kafka:
-    bootstrap-servers: localhost:9092
-
-    producer:
-      key-serializer: org.apache.kafka.common.serialization.StringSerializer
-      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
-
+    bootstrap-servers: kafka:9092
     consumer:
       group-id: notification-group
       auto-offset-reset: earliest
-      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
-      properties:
-        spring.json.value.default.type: com.vinay.ratelimiter.api.dto.NotificationRequest
-        spring.json.trusted.packages: "*"
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+    properties:
+      spring.json.trusted.packages: "*"
 
-    listener:
-      missing-topics-fatal: false
-  output:
-    ansi:
-      enabled: always
-notification:
-  limits:
-
-    EMAIL:
-      limit: 5
-      window: 60
-    SMS:
-      limit: 2
-      window: 60
-    PUSH:
-      limit: 10
-      window: 60
-logging:
-  level:
-    root: INFO
-    com.vinay: DEBUG
 management:
   endpoints:
     web:
       exposure:
-        include: "health,info,prometheus"
-  endpoint:
-    health:
-      show-details: always
+        include: health,info,prometheus
   metrics:
     tags:
       application: notification-service

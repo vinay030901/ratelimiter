@@ -1,0 +1,97 @@
+{
+  "id": null,
+  "title": "Notification Service Overview",
+  "tags": ["notification", "spring-boot", "prometheus"],
+  "timezone": "browser",
+  "schemaVersion": 36,
+  "version": 1,
+  "panels": [
+    {
+      "type": "stat",
+      "title": "Queued Notifications",
+      "targets": [
+        {
+          "expr": "notifications_queued_total",
+          "legendFormat": "queued",
+          "refId": "A"
+        }
+      ],
+      "gridPos": { "x": 0, "y": 0, "w": 6, "h": 4 }
+    },
+    {
+      "type": "stat",
+      "title": "Successful Notifications",
+      "targets": [
+        {
+          "expr": "notifications_success_total",
+          "legendFormat": "success",
+          "refId": "B"
+        }
+      ],
+      "gridPos": { "x": 6, "y": 0, "w": 6, "h": 4 }
+    },
+    {
+      "type": "stat",
+      "title": "Failed Notifications",
+      "targets": [
+        {
+          "expr": "notifications_failed_total",
+          "legendFormat": "failed",
+          "refId": "C"
+        }
+      ],
+      "gridPos": { "x": 12, "y": 0, "w": 6, "h": 4 }
+    },
+    {
+      "type": "stat",
+      "title": "Retries Attempted",
+      "targets": [
+        {
+          "expr": "notifications_retry_total",
+          "legendFormat": "retries",
+          "refId": "D"
+        }
+      ],
+      "gridPos": { "x": 18, "y": 0, "w": 6, "h": 4 }
+    },
+    {
+      "type": "timeseries",
+      "title": "Notification Activity (per second)",
+      "targets": [
+        {
+          "expr": "rate(notifications_queued_total[1m])",
+          "legendFormat": "queued",
+          "refId": "E"
+        },
+        {
+          "expr": "rate(notifications_success_total[1m])",
+          "legendFormat": "success",
+          "refId": "F"
+        },
+        {
+          "expr": "rate(notifications_failed_total[1m])",
+          "legendFormat": "failed",
+          "refId": "G"
+        },
+        {
+          "expr": "rate(notifications_retry_total[1m])",
+          "legendFormat": "retry",
+          "refId": "H"
+        }
+      ],
+      "gridPos": { "x": 0, "y": 4, "w": 24, "h": 10 }
+    },
+    {
+      "type": "timeseries",
+      "title": "Success by Channel",
+      "targets": [
+        {
+          "expr": "sum by(channel) (notifications_success_total)",
+          "legendFormat": "{{channel}}",
+          "refId": "I"
+        }
+      ],
+      "gridPos": { "x": 0, "y": 14, "w": 24, "h": 10 }
+    }
+  ]
+}
