@@ -8,6 +8,7 @@ public record NotificationRequest(
         @JsonProperty("userId") @NotBlank String userId,
         @JsonProperty("channel") @NotBlank String channel,
         @JsonProperty("destination") @NotBlank String destination,
+        @JsonProperty("subject") @NotBlank String subject,
         @JsonProperty("message") @NotBlank String message
 ) {
 }

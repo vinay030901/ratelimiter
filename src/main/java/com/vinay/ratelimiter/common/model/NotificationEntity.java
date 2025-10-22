@@ -1,16 +1,25 @@
 package com.vinay.ratelimiter.common.model;
 
+import java.time.Instant;
+
 import com.vinay.ratelimiter.common.enums.NotificationStatus;
-import jakarta.persistence.*;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.Instant;
-
 @Entity
-@Table(name="notification_requests")
+@Table(name = "notification_requests")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -40,12 +49,14 @@ public class NotificationEntity {
 
     private String providerMessageId;
 
+    @Builder.Default
     private Integer retryCount = 0;
     private Instant lastAttemptAt;
 
     @PrePersist
     protected void onCreate() {
         this.createdAt = Instant.now();
-        if(this.status == null) this.status = NotificationStatus.QUEUED;
+        if (this.status == null)
+            this.status = NotificationStatus.QUEUED;
     }
 }

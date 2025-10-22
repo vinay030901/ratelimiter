@@ -11,7 +11,7 @@ public class KafkaTopicConfig {
 
     @Bean
     public NewTopic notificationsRequestsTopic() {
-        return TopicBuilder.name("notification.requests")
+        return TopicBuilder.name("notifications.requests")
                 .partitions(6)
                 .replicas(1)
                 .build();
@@ -19,7 +19,7 @@ public class KafkaTopicConfig {
     // Dead-letter topic
     @Bean
     public NewTopic notificationsRequestDlt(){
-        return TopicBuilder.name("notification.requests.dlt")
+        return TopicBuilder.name("notifications.requests.dlt")
                 .partitions(3)
                 .replicas(1)
                 .build();

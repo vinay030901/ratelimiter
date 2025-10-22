@@ -3,26 +3,32 @@ server:
 
 spring:
   datasource:
-    url: jdbc:postgresql://postgres:5432/notifications
+    url: jdbc:postgresql://localhost:5432/notifications
     username: vinay
     password: password
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
-      ddl-auto: update   # ⚠️ dev only
+      ddl-auto: update # ⚠️ dev only
     show-sql: true
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     properties:
       hibernate:
         jdbc:
           time_zone: UTC
-
-  redis:
-    host: redis
-    port: 6379
+  mail:
+    port: 587
+    host: email-smtp.ap-south-1.amazonaws.com
+    username: ${SES_SMTP_USER}
+    password: ${SES_SMTP_PASSWORD}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls.enable: true
 
   kafka:
-    bootstrap-servers: kafka:9092
+    bootstrap-servers: localhost:29092
     consumer:
       group-id: notification-group
       auto-offset-reset: earliest
@@ -31,6 +37,10 @@ spring:
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
     properties:
       spring.json.trusted.packages: "*"
+  data:
+    redis:
+      host: localhost
+      port: 6379
 
 management:
   endpoints:
@@ -40,3 +50,13 @@ management:
   metrics:
     tags:
       application: notification-service
+
+twilio:
+  account-sid: ${TWILIO_ACCOUNT_SID}
+  auth-token: ${TWILIO_AUTH_TOKEN}
+  from-number: ${TWILIO_FROM_NUMBER}
+  message-service-sid: ${TWILIO_MESSAGE_SERVICE_SID}
+
+logging:
+  level:
+    com.vinay.ratelimiter: DEBUG
