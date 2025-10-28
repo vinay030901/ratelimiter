@@ -22,6 +22,9 @@ public class SmsProvider implements NotificationProvider {
     @Value("${twilio.message-service-sid}")
     private String messagingServiceSid;
 
+    @Value("${twilio.from-number}")
+    private String fromNumber;
+
     // Initialize Twilio once
     private boolean initialized = false;
 
@@ -40,10 +43,11 @@ public class SmsProvider implements NotificationProvider {
         // Twilio API call here
         String to = request.destination();
         String body = request.message();
+        log.info("To: {}, Body: {}, fromNumber: {}", to, body,fromNumber);
         try {
             Message message = Message.creator(
                     new PhoneNumber(to),
-                    messagingServiceSid,
+                    new PhoneNumber(fromNumber),
                     body
             ).create();
             log.info("SMS sent successfully with SID: {}", message.getSid());

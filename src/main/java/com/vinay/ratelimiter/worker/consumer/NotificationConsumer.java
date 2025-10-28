@@ -39,19 +39,21 @@ public class NotificationConsumer {
     @KafkaListener(topics = "notifications.requests", groupId = "notification-group", containerFactory = "kafkaListenerContainerFactory")
     public void consume(NotificationRequest request) {
         try {
-            log.debug("Consumer received notification request: {}", request);
-            dispatcher.dispatch(request);
-            notificationMetrics.incrementSent(request.channel());
+                log.debug("Consumer successfully deserialized NotificationRequest: {}", request);
+                dispatcher.dispatch(request);
+                notificationMetrics.incrementSent(request.channel());
         } catch (Exception e) {
-            repository.findByRequestId(request.requestId()).ifPresent(entity -> {
-                entity.setStatus(NotificationStatus.RETRYING);
-                entity.setRetryCount((entity.getRetryCount() == null ? 0 : entity.getRetryCount()) + 1);
-                entity.setErrorMessage(e.getMessage());
-                entity.setLastAttemptAt(Instant.now());
-                repository.save(entity);
-            });
-            log.warn("Retrying notification {} due to error: {}", request.requestId(), e.getMessage());
-            notificationMetrics.incrementRetry(request.channel());
+            log.error("Consumer exception: {}", e.getMessage(), e);
+            // Optionally, handle DB retry logic here if payload is NotificationRequest
+                repository.findByRequestId(request.requestId()).ifPresent(entity -> {
+                    entity.setStatus(NotificationStatus.RETRYING);
+                    entity.setRetryCount((entity.getRetryCount() == null ? 0 : entity.getRetryCount()) + 1);
+                    entity.setErrorMessage(e.getMessage());
+                    entity.setLastAttemptAt(Instant.now());
+                    repository.save(entity);
+                });
+                log.warn("Retrying notification {} due to error: {}", request.requestId(), e.getMessage());
+                notificationMetrics.incrementRetry(request.channel());
             throw e; // rethrow to trigger retry/DLT
         }
     }
